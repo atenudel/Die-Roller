@@ -1,0 +1,183 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>p10 by Arturo Tenorio</title>
+		
+		<style type="text/css">
+			#printField {
+			position:absolute;
+            top:200px;
+			width:400px;
+			height:400px;
+			
+			}
+			#tolerancediv {
+            position:absolute;
+            top:50px;
+            left:155px;
+			}
+			#rolldiv {
+            position:absolute;
+            top: 80px;
+            left:50px;
+			}
+			#print {
+			position:absolute;
+            top:40px;
+            left:90px;
+			}
+			#eachf {
+            position:absolute;
+            top:120px;
+            left:80px;
+			}
+			h4 {
+			position:absolute;
+			box-shadow: inset 1px 1px 3px #999;
+			font-weight: bold; 
+            width: 275px;
+			left:100px;
+            top:0px;
+            }	
+			#tolerance{
+			width:40px
+			}
+			#texts {
+			position:absolute;
+			top:160px;
+            left:25px;
+			}
+			#letsroll {
+			position:absolute;
+			top:150px;
+			left:170px;
+			font-style:italic;
+			font-weight:bold;
+			}
+			#yesorno {
+			position:absolute;
+			top:40px;
+			left:300px;
+			}
+			#print2 {
+			position:absolute;
+			top:300px;
+			left:100px;
+            
+			}
+			div {
+			font-weight:bold;
+			}
+			#pic{
+			position:absolute;
+            top:30px;
+			}
+			
+			
+		</style>
+		
+		<script type="text/javascript">
+			
+			function rolltime(x) {
+				var rollCount = parseInt(x);
+				document.getElementById("showrolls").value = rollCount;
+				document.getElementById("perface").value = (rollCount/6);
+				
+			} 
+			
+			function report(x,y) {
+				
+				var prin = document.getElementById("print"); 
+				var prin2 = document.getElementById("print2");
+				var isBadDie = false; 
+				
+				var tolerance = parseInt(x); // Tolerance to decide if die is good or bad
+				var maxRolls = parseInt(y); // The total times the die rolls 
+				var perfectCount = (maxRolls / 6); // The number of rolls per face.
+				var acceptablePercent;
+				var frequency = [0,0,0,0,0,0]; // to hold frequency per face
+				var difference = [0,0,0,0,0,0]; // to hold difference per face		
+				var percentDiff = [0,0,0,0,0,0]; // to hold % difference
+				prin.innerHTML = "";
+				// Load up dice rolls
+				for(var i = 0; i < maxRolls; i++) {
+					frequency[roll()-1]++;
+				}
+				
+				//Load up difference
+				for(var i = 0; i < 6; i++) {
+					difference[i] = Math.abs(perfectCount - frequency[i]);
+				}
+				
+				for(var i = 0; i < 6; i++) {
+					percentDiff[i] = ((difference[i]/perfectCount)*100);
+				}
+				
+				for(var i = 0; i < 6; i++) {
+					prin.innerHTML+=frequency[i] + "\t " +
+					difference[i].toFixed(2) + "\t " + 
+					percentDiff[i].toFixed(2) + "%\t\t";
+					
+					if(percentDiff[i]<=tolerance) {
+						prin.innerHTML+='<img src="YES.png" height="32" width="32">' + "\t"; 
+						
+						} else {
+						isBadDie = true;
+						prin.innerHTML+='<img src="NO.png" height="32" width="32">'; 
+						
+					}
+					prin.innerHTML+='\n';
+					
+				}
+				if(isBadDie == false){
+					prin2.innerHTML="Conclusion: This Die is GOOD!";
+					prin2.style.backgroundColor="green";
+					} else {
+					prin2.innerHTML="Conclusion: This Die is BAD!";
+					prin2.style.backgroundColor="red";
+				}
+				
+			}
+			
+			function roll() {
+				var rolled = (((Math.round((Math.random())*1000))%6)+1)
+				return rolled;
+			}
+			
+		</script>
+	</head>
+	<body>
+		<form>
+			<h4>Let's Find Out How Reliable This Die Is</h4>
+			
+			<div id="tolerancediv">					
+				<label for="tolerance">Tolerance: <input  type="number" id="tolerance" min="3" max="15" value="3"/> %</label>					
+			</div>          
+			
+			<div id="rolldiv">
+				<label>Rolling Times:<input type="range" id="roll" min="600" max="12000" value="600" onchange="rolltime(document.getElementById('roll').value)"/> </label>
+				<input type="text" id="showrolls" value="600" style="width:40px;" readonly>
+			</div>
+			
+			<div id="eachf">
+				<label>Each face should appear:  <input type="text" id="perface" style="width:60px;" readonly>  times</label>
+			</div>
+			
+			<div style="text-align:center;"> <input type="button" id="letsroll" value="Let's Roll!" 
+				onclick="report(document.getElementById('tolerance').value, document.getElementById('roll').value)" /> 
+			</div>
+			
+			<pre id="texts">Face  Frequence  Difference  %-Difference   Acceptable(?)</pre>
+			
+			<fieldset id="printField">
+				<pre id="pic"> <div> <img src="die1.png" alt="die1" height="32" width="32" > <br> <img src="die2.png" alt="die2" height="32" width="32"> <br> <img src="die3.png" alt="die3" height="32" width="32"> <br> <img src="die4.png" alt="die4" height="32" width="32"> <br> <img src="die5.png" alt="die5" height="32" width="32"> <br> <img src="die6.png" alt="die6" height="32" width="32"> 
+				</div>
+				</pre>
+				<pre id="print">  </pre>
+				<h3 id="print2"></h3>
+			</pre> 
+		</fieldset>
+	</form>
+</body>
+</html>															
